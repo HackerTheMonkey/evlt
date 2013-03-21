@@ -14,6 +14,8 @@ class Evlt():
     COMMIT_COMMAND = " commit "
     STATUS_COMMAND = " status "
     UPDATE_COMMAND = " update "
+    ADD_COMMAND = " add "
+
     EMPTY_STRING = ""    
 
     def doCommit(self, namespace):                
@@ -43,6 +45,15 @@ class Evlt():
     def doUpdate(self, namespace):
         print commands.getoutput(self.isDebugMode(namespace) + self.VLT_COMMAND + self.UPDATE_COMMAND)
 
+    def doAdd(self, namespace):
+        print commands.getoutput(self.isDebugMode(namespace) + self.VLT_COMMAND + self.ADD_COMMAND + str(Files(namespace.files)))        
+
+    def getFiles(self, files):
+        filesString = self.EMPTY_STRING
+        for file in files:
+            filesString += str(file)
+            filesString += self.SINGLE_SPACE
+        return filesString
 
     def __init__(self, *args):
         namespaceObject = self.defineCommandLineOptions()
@@ -70,6 +81,11 @@ class Evlt():
         updateParsers = subparsers.add_parser("update", help="Bring changes from the repository into the working copy.")
         updateParsers.set_defaults(func=self.doUpdate)
 
+    def createAddParser(self, subparsers):
+        addParser = subparsers.add_parser("add", help="Put files and directories under version control, scheduling them for addition to repository. They will be added in next commit.")
+        addParser.add_argument("files", nargs='*')
+        addParser.set_defaults(func=self.doAdd)        
+
     def isDebugMode(self, namespace):
         if namespace.isDebugMode:
             return "echo "
@@ -93,9 +109,24 @@ class Evlt():
         # Create a parser for the update command
         self.createUpdateParser(subparsers)
 
+        # Create a parser for the add command
+        self.createAddParser(subparsers)
+
         # Create a parser for the
         
         return self.argumentParser.parse_args()
+
+class Files (list):
+
+    def __init__(self, files):
+        self.files = files
+
+    def __str__(self):
+        filesString = Evlt.EMPTY_STRING
+        for file in self.files:
+            filesString += str(file)
+            filesString += Evlt.SINGLE_SPACE
+        return filesString
 
 if __name__ == '__main__':
     Evlt()
