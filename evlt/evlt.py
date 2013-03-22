@@ -15,6 +15,7 @@ class Evlt():
     STATUS_COMMAND = " status "
     UPDATE_COMMAND = " update "
     ADD_COMMAND = " add "
+    DELETE_COMMAND = " delete "
 
     EMPTY_STRING = ""    
 
@@ -46,7 +47,10 @@ class Evlt():
         print commands.getoutput(self.isDebugMode(namespace) + self.VLT_COMMAND + self.UPDATE_COMMAND)
 
     def doAdd(self, namespace):
-        print commands.getoutput(self.isDebugMode(namespace) + self.VLT_COMMAND + self.ADD_COMMAND + str(Files(namespace.files)))        
+        print commands.getoutput(self.isDebugMode(namespace) + self.VLT_COMMAND + self.ADD_COMMAND + str(Files(namespace.files)))
+
+    def doDelete(self, namespace):
+        print commands.getoutput(self.isDebugMode(namespace) + self.VLT_COMMAND + self.DELETE_COMMAND + str(Files(namespace.files)))        
 
     def getFiles(self, files):
         filesString = self.EMPTY_STRING
@@ -86,6 +90,11 @@ class Evlt():
         addParser.add_argument("files", nargs='*')
         addParser.set_defaults(func=self.doAdd)        
 
+    def createDeleteParser(self, subparsers):
+        deleteParser = subparsers.add_parser("delete", help="Remove files and directories from version control.")
+        deleteParser.add_argument("files", nargs='*')
+        deleteParser.set_defaults(func=self.doDelete)
+
     def isDebugMode(self, namespace):
         if namespace.isDebugMode:
             return "echo "
@@ -111,6 +120,9 @@ class Evlt():
 
         # Create a parser for the add command
         self.createAddParser(subparsers)
+
+        # Create a parser for the delete command
+        self.createDeleteParser(subparsers)
 
         # Create a parser for the
         
