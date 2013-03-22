@@ -29,7 +29,7 @@ class Evlt():
             commandParts += " --force "
 
 
-        print commands.getoutput(self.isDebugMode(namespace) + self.VLT_COMMAND + self.COMMIT_COMMAND + commandParts)
+        print commands.getoutput(self.isDryRun(namespace) + self.VLT_COMMAND + self.COMMIT_COMMAND + commandParts)
 
     def updateSources(self):        
         print "Updating the locals sources"
@@ -37,20 +37,20 @@ class Evlt():
     def doCheckout(self, namespace):        
 
         if hasattr(namespace, "uri") & len(namespace.uri) > 0:
-            commands.getoutput(self.isDebugMode(namespace) + self.VLT_COMMAND + self.CHECKOUT_COMMAND + self.BASE_URL + namespace.uri)
+            commands.getoutput(self.isDryRun(namespace) + self.VLT_COMMAND + self.CHECKOUT_COMMAND + self.BASE_URL + namespace.uri)
             print 'Checkout completed successfully'
 
     def doStatus(self, namespace):
-        print commands.getoutput(self.isDebugMode(namespace) + self.VLT_COMMAND + self.STATUS_COMMAND)
+        print commands.getoutput(self.isDryRun(namespace) + self.VLT_COMMAND + self.STATUS_COMMAND)
 
     def doUpdate(self, namespace):
-        print commands.getoutput(self.isDebugMode(namespace) + self.VLT_COMMAND + self.UPDATE_COMMAND)
+        print commands.getoutput(self.isDryRun(namespace) + self.VLT_COMMAND + self.UPDATE_COMMAND)
 
     def doAdd(self, namespace):
-        print commands.getoutput(self.isDebugMode(namespace) + self.VLT_COMMAND + self.ADD_COMMAND + str(Files(namespace.files)))
+        print commands.getoutput(self.isDryRun(namespace) + self.VLT_COMMAND + self.ADD_COMMAND + str(Files(namespace.files)))
 
     def doDelete(self, namespace):
-        print commands.getoutput(self.isDebugMode(namespace) + self.VLT_COMMAND + self.DELETE_COMMAND + str(Files(namespace.files)))        
+        print commands.getoutput(self.isDryRun(namespace) + self.VLT_COMMAND + self.DELETE_COMMAND + str(Files(namespace.files)))        
 
     def getFiles(self, files):
         filesString = self.EMPTY_STRING
@@ -95,7 +95,7 @@ class Evlt():
         deleteParser.add_argument("files", nargs='*')
         deleteParser.set_defaults(func=self.doDelete)
 
-    def isDebugMode(self, namespace):
+    def isDryRun(self, namespace):
         if namespace.isDebugMode:
             return "echo "
         return self.EMPTY_STRING
@@ -103,7 +103,7 @@ class Evlt():
     def defineCommandLineOptions(self):
 
         self.argumentParser = argparse.ArgumentParser(prog='vlt')
-        self.argumentParser.add_argument("--debug", action="store_true", dest="isDebugMode")
+        self.argumentParser.add_argument("--dry-run", action="store_true", dest="isDebugMode")
         subparsers = self.argumentParser.add_subparsers()
 
         # Create a parser for the checkout command
